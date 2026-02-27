@@ -4,15 +4,13 @@ from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import generics, permissions
-from rest_framework.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Job
 from .serializers import JobSerializer
 from .filters import JobFilter
-from companies.permissions import IsRecruiter
+from .permissions import IsRecruiter
 
-from .filters import JobFilter
 
 class JobListView(generics.ListAPIView):
     queryset = Job.objects.all()
@@ -38,8 +36,4 @@ class JobCreateView(generics.CreateAPIView):
     permission_classes = [IsRecruiter]
 
     def perform_create(self, serializer):
-
-        if not self.request.user.company:
-            raise ValidationError("Recruiter must belong to a company.")
-
-        serializer.save(company=self.request.user.company)
+        serializer.save(recruiter=self.request.user)

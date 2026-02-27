@@ -1,6 +1,5 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.core.exceptions import ValidationError
 
 
 class User(AbstractUser):
@@ -25,18 +24,6 @@ class User(AbstractUser):
     profile_completed = models.BooleanField(
         default=False
     )
-
-    company = models.ForeignKey(
-        'companies.Company',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='recruiters'
-    )
-
-    def clean(self):
-        if self.role == 'recruiter' and not self.company:
-            raise ValidationError("Recruiter must belong to a company.")
 
     def __str__(self):
         return self.username
