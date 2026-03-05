@@ -37,3 +37,12 @@ class JobCreateView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(recruiter=self.request.user)
+
+
+class MyJobListView(generics.ListAPIView):
+    serializer_class = JobSerializer
+    permission_classes = [IsRecruiter]
+
+    def get_queryset(self):
+        return Job.objects.filter(recruiter=self.request.user).order_by('-created_at')
+        
